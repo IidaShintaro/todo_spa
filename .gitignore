@@ -1,6 +1,6 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -33,12 +33,6 @@ frontend/node_modules/
 frontend/dist/
 frontend/build/
 frontend/.env
-
-# --- Backend (Spring Boot) ---
-backend/target/
-backend/.gradle/
-backend/build/
-backend/bin/
 
 # --- IDE / OS ---
 .vscode/

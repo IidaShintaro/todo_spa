@@ -36,6 +36,14 @@ public class TodoApiController {
                 .toList();
     }
 
+    // タスク検索処理API
+    @GetMapping("/search")
+    public List<TodoResponse> searchTask(@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long statusId) {
+        return taskService.searchTask(categoryId, statusId).stream()
+                .map(TodoResponse::new)
+                .toList();
+    }
+
     // タスク詳細画面表示処理API
     @GetMapping("/detail/{id}")
     public ResponseEntity<TodoDetailResponse> detailTask(@PathVariable Long id) {

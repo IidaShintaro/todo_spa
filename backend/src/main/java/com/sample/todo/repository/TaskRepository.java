@@ -20,6 +20,9 @@ public class TaskRepository {
         return this.mapper.findAll();
     }
 
+    // タスク検索メソッド
+    public List<TaskEntity> searchTask(Long categoryId, Long statusId) { return this.mapper.searchTask(categoryId, statusId); }
+
     // 1件取得メソッド
     public TaskEntity findById(Long id) {
         return this.mapper.findById(id);

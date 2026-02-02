@@ -12,8 +12,14 @@ interface TodoResponse {
 
 function TaskList() {
   const [todos, setTodos] = useState<TodoResponse[]>([]);
+  const [categoryMap, setCategoryMap] = useState<{ [key: string]: string }>({});
+  const [statusMap, setStatusMap] = useState<{ [key: string]: string }>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [searchConditions, setSearchConditions] = useState({
+    categoryId: "",
+    statusId: "",
+  });
 
   // 削除対象のIDを保持するState
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
@@ -27,6 +33,39 @@ function TaskList() {
     } catch (error) {
       setErrorMessage("データ取得に失敗しました");
       console.error("Error fetching todos:", error);
+    }
+  };
+
+  // マスタデータ取得関数
+  const fetchMaster = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/todos/masters`);
+      const data = await response.json();
+      setCategoryMap(data.categoryMap);
+      setStatusMap(data.statusMap);
+    } catch (error) {
+      console.error("エラーが発生しました:", error);
+      setErrorMessage("マスタデータの取得に失敗しました。");
+    }
+  };
+
+  // 検索実行関数
+  const feachSearch = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchConditions.categoryId)
+        params.append("categoryId", searchConditions.categoryId);
+      if (searchConditions.statusId)
+        params.append("statusId", searchConditions.statusId);
+
+      const response = await fetch(
+        `http://localhost:8080/api/todos/search?${params.toString()}`,
+      );
+      const data = await response.json();
+      setTodos(data);
+    } catch (error) {
+      setErrorMessage("検索に失敗しました");
+      console.error("Error searching todos:", error);
     }
   };
 
@@ -58,6 +97,7 @@ function TaskList() {
 
   useEffect(() => {
     fetchTodos();
+    fetchMaster();
   }, []);
 
   return (
@@ -69,6 +109,45 @@ function TaskList() {
           <button className="btn btn-primary">新規作成</button>
         </Link>
       </div>
+
+      <label className="mx-3">カテゴリー</label>
+      <select
+        className="mx-3"
+        value={searchConditions.categoryId}
+        onChange={(e) =>
+          setSearchConditions({
+            ...searchConditions,
+            categoryId: e.target.value,
+          })
+        }
+      >
+        <option value="">全て表示</option>
+        {Object.entries(categoryMap).map(([id, name]) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
+      </select>
+
+      <label className="mx-3">ステータス</label>
+      <select
+        className="mx-3"
+        value={searchConditions.statusId}
+        onChange={(e) =>
+          setSearchConditions({ ...searchConditions, statusId: e.target.value })
+        }
+      >
+        <option value="">全て表示</option>
+        {Object.entries(statusMap).map(([id, name]) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
+      </select>
+
+      <button className="btn btn-secondary mx-3" onClick={feachSearch}>
+        検索
+      </button>
 
       {successMessage && (
         <div className="alert alert-success mx-3">{successMessage}</div>

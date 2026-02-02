@@ -20,6 +20,11 @@ public class TaskService {
         return repository.findAll();
     }
 
+    // タスク検索メソッド
+    public List<TaskEntity> searchTask(Long categoryId, Long statusId) {
+        return repository.searchTask(categoryId, statusId);
+    }
+
     // 1件取得メソッド
     public TaskEntity findById(Long id) {
         return repository.findById(id);

@@ -14,6 +14,9 @@ public interface TaskMapper {
     // 全件取得
     List<TaskEntity> findAll();
 
+    // タスク検索
+    List<TaskEntity> searchTask(Long categoryId, Long statusId);
+
     // 1件取得
     TaskEntity findById(Long id);
 

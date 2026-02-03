@@ -82,6 +82,8 @@ function TaskDetail() {
       <div className="row">
         <div className="col-12">
           <h2>タスク詳細</h2>
+
+          {/* メッセージ表示 */}
           {successMessage && (
             <div className="alert alert-success mx-3">{successMessage}</div>
           )}
@@ -89,6 +91,7 @@ function TaskDetail() {
             <div className="alert alert-danger mx-3">{errorMessage}</div>
           )}
 
+          {/* タスク詳細表示 */}
           <div className="card">
             <div className="card-header">
               <h5 className="card-title">
@@ -105,7 +108,7 @@ function TaskDetail() {
                         <th>カテゴリー</th>
                         <td>
                           <select
-                            className="form-select"
+                            className="form-select w-auto"
                             name="categoryId"
                             value={todo.categoryId}
                             onChange={handleChange}
@@ -135,7 +138,7 @@ function TaskDetail() {
                         <td>
                           <input
                             type="date"
-                            className="form-control"
+                            className="form-control w-auto"
                             name="deadline"
                             value={todo.deadline}
                             onChange={handleChange}
@@ -146,7 +149,7 @@ function TaskDetail() {
                         <th>ステータス</th>
                         <td>
                           <select
-                            className="form-select"
+                            className="form-select w-auto"
                             name="statusId"
                             value={todo.statusId}
                             onChange={handleChange}
@@ -168,7 +171,7 @@ function TaskDetail() {
             </div>
           </div>
           <div className="card-footer">
-            <button className="btn btn-primary mt-3 mr-3" onClick={fetchUpdate}>
+            <button className="btn btn-primary mt-3 mx-3" onClick={fetchUpdate}>
               更新
             </button>
             <Link to="/" className="btn btn-secondary mt-3">

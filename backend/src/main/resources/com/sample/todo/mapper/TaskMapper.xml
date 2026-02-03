@@ -31,6 +31,39 @@
             tt.id ASC
     </select>
 
+    <!-- 検索取得 -->
+    <select id="searchTask" resultType="TaskEntity">
+        SELECT
+        tt.id as id,
+        tt.category_id as categoryId,
+        cm.category_name as category,
+        tt.task_name as task,
+        tt.detail as detail,
+        tt.status_id as statusId,
+        sm.status_name as status,
+        tt.deadline as deadline,
+        tt.created_at as created_at,
+        tt.updated_at as updated_at,
+        tt.delete_flag as delete_flag
+        FROM
+        task_table tt
+        LEFT JOIN
+        category_master cm ON tt.category_id = cm.id
+        LEFT JOIN
+        status_master sm ON tt.status_id = sm.id
+        <where>
+        tt.delete_flag = false
+        <if test="categoryId != null and categoryId != ''">
+            AND tt.category_id = #{categoryId}
+        </if>
+        <if test="statusId != null and statusId != ''">
+            AND tt.status_id = #{statusId}
+        </if>
+        </where>
+        ORDER BY
+        tt.id ASC
+    </select>
+
     <!-- タスク1件取得 -->
     <select id="findById" resultType="TaskEntity">
         SELECT

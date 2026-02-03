@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 function TaskCreate() {
   const navigate = useNavigate();
 
-  // 初期値
+  // フォーム初期値
   const [todo, setTodo] = useState({
     task: "",
     detail: "",
@@ -74,6 +74,8 @@ function TaskCreate() {
       <div className="row">
         <div className="col-12">
           <h2>タスク登録</h2>
+
+          {/* メッセージ表示 */}
           {successMessage && (
             <div className="alert alert-success mx-3">{successMessage}</div>
           )}
@@ -81,6 +83,7 @@ function TaskCreate() {
             <div className="alert alert-danger mx-3">{errorMessage}</div>
           )}
 
+          {/* タスク登録フォーム */}
           <div className="card">
             <div className="card-header">
               <h5 className="card-title">新規タスク登録フォーム</h5>
@@ -107,7 +110,7 @@ function TaskCreate() {
                         <th>カテゴリー</th>
                         <td>
                           <select
-                            className="form-select"
+                            className="form-select w-auto"
                             name="categoryId"
                             value={todo.categoryId}
                             onChange={handleChange}
@@ -137,7 +140,7 @@ function TaskCreate() {
                         <td>
                           <input
                             type="date"
-                            className="form-control"
+                            className="form-control w-auto"
                             name="deadline"
                             value={todo.deadline}
                             onChange={handleChange}
@@ -148,7 +151,7 @@ function TaskCreate() {
                         <th>ステータス</th>
                         <td>
                           <select
-                            className="form-select"
+                            className="form-select w-auto"
                             name="statusId"
                             value={todo.statusId}
                             onChange={handleChange}
@@ -170,7 +173,7 @@ function TaskCreate() {
             </div>
           </div>
           <div className="card-footer">
-            <button className="btn btn-success mt-3 mr-3" onClick={fetchCreate}>
+            <button className="btn btn-success mt-3 mx-3" onClick={fetchCreate}>
               登録
             </button>
             <Link to="/" className="btn btn-secondary mt-3">

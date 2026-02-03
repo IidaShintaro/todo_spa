@@ -50,7 +50,7 @@ function TaskList() {
   };
 
   // 検索実行関数
-  const feachSearch = async () => {
+  const fetchSearch = async () => {
     try {
       const params = new URLSearchParams();
       if (searchConditions.categoryId)
@@ -95,6 +95,14 @@ function TaskList() {
     }
   };
 
+  // 検索条件変更ハンドラ
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSearchConditions({
+      ...searchConditions,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   useEffect(() => {
     fetchTodos();
     fetchMaster();
@@ -110,16 +118,13 @@ function TaskList() {
         </Link>
       </div>
 
-      <label className="mx-3">カテゴリー</label>
+      {/* 検索フォーム */}
+      <label className="mx-3">カテゴリー：</label>
       <select
-        className="mx-3"
+        className="form-select d-inline-block w-auto"
         value={searchConditions.categoryId}
-        onChange={(e) =>
-          setSearchConditions({
-            ...searchConditions,
-            categoryId: e.target.value,
-          })
-        }
+        onChange={handleChange}
+        name="categoryId"
       >
         <option value="">全て表示</option>
         {Object.entries(categoryMap).map(([id, name]) => (
@@ -129,13 +134,12 @@ function TaskList() {
         ))}
       </select>
 
-      <label className="mx-3">ステータス</label>
+      <label className="mx-3">ステータス：</label>
       <select
-        className="mx-3"
+        className="form-select d-inline-block w-auto"
         value={searchConditions.statusId}
-        onChange={(e) =>
-          setSearchConditions({ ...searchConditions, statusId: e.target.value })
-        }
+        onChange={handleChange}
+        name="statusId"
       >
         <option value="">全て表示</option>
         {Object.entries(statusMap).map(([id, name]) => (
@@ -145,10 +149,17 @@ function TaskList() {
         ))}
       </select>
 
-      <button className="btn btn-secondary mx-3" onClick={feachSearch}>
+      <button className="btn btn-secondary mx-3 my-3 " onClick={fetchSearch}>
         検索
       </button>
+      <button
+        className="btn btn-light my-3"
+        onClick={() => setSearchConditions({ categoryId: "", statusId: "" })}
+      >
+        クリア
+      </button>
 
+      {/* メッセージ表示 */}
       {successMessage && (
         <div className="alert alert-success mx-3">{successMessage}</div>
       )}
@@ -156,6 +167,7 @@ function TaskList() {
         <div className="alert alert-danger mx-3">{errorMessage}</div>
       )}
 
+      {/* タスク一覧テーブル */}
       <div className="col-12 ml-3">
         <table className="table table-hover">
           <thead className="table-primary">
@@ -202,6 +214,7 @@ function TaskList() {
         </table>
       </div>
 
+      {/* 削除確認モーダル */}
       <div
         className="modal fade"
         id="deleteModal"

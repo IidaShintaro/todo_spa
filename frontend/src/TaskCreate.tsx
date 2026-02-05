@@ -22,7 +22,15 @@ function TaskCreate() {
   useEffect(() => {
     const fetchMaster = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/masters`);
+        const response = await fetch(
+          `http://localhost:8080/api/todos/masters`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
+            },
+          },
+        );
         const data = await response.json();
         setCategoryMap(data.categoryMap);
         setStatusMap(data.statusMap);
@@ -53,13 +61,14 @@ function TaskCreate() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
         },
         body: JSON.stringify(todo),
       });
 
       if (response.ok) {
         setSuccessMessage("タスクの登録に成功しました。");
-        navigate("/"); // 一覧画面に遷移
+        navigate("/list"); // 一覧画面に遷移
       } else {
         setErrorMessage("タスクの登録に失敗しました。");
       }
@@ -176,7 +185,7 @@ function TaskCreate() {
             <button className="btn btn-success mt-3 mx-3" onClick={fetchCreate}>
               登録
             </button>
-            <Link to="/" className="btn btn-secondary mt-3">
+            <Link to="/list" className="btn btn-secondary mt-3">
               戻る
             </Link>
           </div>

@@ -27,7 +27,11 @@ function TaskList() {
   // タスク一覧取得関数
   const fetchTodos = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/todos");
+      const response = await fetch("http://localhost:8080/api/todos", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
+        },
+      });
       const data = await response.json();
       setTodos(data);
     } catch (error) {
@@ -39,7 +43,11 @@ function TaskList() {
   // マスタデータ取得関数
   const fetchMaster = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/todos/masters`);
+      const response = await fetch(`http://localhost:8080/api/todos/masters`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
+        },
+      });
       const data = await response.json();
       setCategoryMap(data.categoryMap);
       setStatusMap(data.statusMap);
@@ -60,6 +68,11 @@ function TaskList() {
 
       const response = await fetch(
         `http://localhost:8080/api/todos/search?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
+          },
+        },
       );
       const data = await response.json();
       setTodos(data);
@@ -78,6 +91,9 @@ function TaskList() {
         `http://localhost:8080/api/todos/delete/${deleteTargetId}`,
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
+          },
         },
       );
 
@@ -110,8 +126,9 @@ function TaskList() {
 
   return (
     <div className="mt-4">
-      <h1 className="my-3 ml-3">タスク一覧</h1>
+      <h2 className="my-3 ml-3">タスク一覧</h2>
 
+      {/* 新規作成ボタン */}
       <div className="mb-3 ml-3">
         <Link to="/create">
           <button className="btn btn-primary">新規作成</button>

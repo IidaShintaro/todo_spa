@@ -26,6 +26,11 @@ function TaskDetail() {
       try {
         const response = await fetch(
           `http://localhost:8080/api/todos/detail/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
+            },
+          },
         );
         const data = await response.json();
         setTodo(data.todoResponse);
@@ -61,6 +66,7 @@ function TaskDetail() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // トークンの添付
           },
           body: JSON.stringify(todo),
         },
@@ -174,7 +180,7 @@ function TaskDetail() {
             <button className="btn btn-primary mt-3 mx-3" onClick={fetchUpdate}>
               更新
             </button>
-            <Link to="/" className="btn btn-secondary mt-3">
+            <Link to="/list" className="btn btn-secondary mt-3">
               戻る
             </Link>
           </div>

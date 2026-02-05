@@ -2,6 +2,7 @@ package com.sample.todo.repository;
 
 import com.sample.todo.controller.dto.TodoRequest;
 import com.sample.todo.entity.TaskEntity;
+import com.sample.todo.entity.UserEntity;
 import com.sample.todo.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,12 +17,12 @@ public class TaskRepository {
     private final TaskMapper mapper;
 
     // 全件取得メソッド
-    public List<TaskEntity> findAll() {
-        return this.mapper.findAll();
+    public List<TaskEntity> findAll(Long userId) {
+        return this.mapper.findAll(userId);
     }
 
     // タスク検索メソッド
-    public List<TaskEntity> searchTask(Long categoryId, Long statusId) { return this.mapper.searchTask(categoryId, statusId); }
+    public List<TaskEntity> searchTask(Long categoryId, Long statusId, Long userId) { return this.mapper.searchTask(categoryId, statusId, userId); }
 
     // 1件取得メソッド
     public TaskEntity findById(Long id) {

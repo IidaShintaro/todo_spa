@@ -27,6 +27,8 @@
             status_master sm ON tt.status_id = sm.id
         WHERE
             tt.delete_flag = false
+        AND
+            tt.user_id = #{userId}
         ORDER BY
             tt.id ASC
     </select>
@@ -53,6 +55,8 @@
         status_master sm ON tt.status_id = sm.id
         <where>
         tt.delete_flag = false
+            AND
+        tt.user_id = #{userId}
         <if test="categoryId != null and categoryId != ''">
             AND tt.category_id = #{categoryId}
         </if>
@@ -115,13 +119,15 @@
             task_name,
             detail,
             deadline,
-            status_id
+            status_id,
+            user_id
         ) VALUES (
             #{categoryId},
             #{task},
             #{detail},
             #{deadline},
-            #{statusId}
+            #{statusId},
+            #{userId}
         )
     </insert>
 

@@ -4,13 +4,18 @@ import com.sample.todo.controller.dto.TodoDetailResponse;
 import com.sample.todo.controller.dto.TodoRequest;
 import com.sample.todo.controller.dto.TodoResponse;
 import com.sample.todo.entity.TaskEntity;
+import com.sample.todo.entity.UserEntity;
+import com.sample.todo.security.LoginUser;
 import com.sample.todo.service.CategoryService;
 import com.sample.todo.service.StatusService;
 import com.sample.todo.service.TaskService;
+import com.sample.todo.service.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,25 +26,31 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/todos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173") // Reactからのアクセスを許可する
 public class TodoApiController {
 
     private final TaskService taskService;
     private final CategoryService categoryService;
     private final StatusService statusService;
+    private  final UserDetailsServiceImpl userDetailsService;
 
     // タスク一覧画面表示処理API
     @GetMapping
-    public List<TodoResponse> listTask(){
-        return taskService.findAll().stream()
+    public List<TodoResponse> listTask(@AuthenticationPrincipal LoginUser loginUser){
+        // ログイン中のユーザーID取得
+        Long userId = loginUser.getUserId();
+
+        return taskService.findAll(userId).stream()
                 .map(TodoResponse::new)
                 .toList();
     }
 
     // タスク検索処理API
     @GetMapping("/search")
-    public List<TodoResponse> searchTask(@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long statusId) {
-        return taskService.searchTask(categoryId, statusId).stream()
+    public List<TodoResponse> searchTask(@RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long statusId, @AuthenticationPrincipal LoginUser loginUser) {
+        // ログイン中のユーザーID取得
+        Long userId = loginUser.getUserId();
+
+        return taskService.searchTask(categoryId, statusId, userId).stream()
                 .map(TodoResponse::new)
                 .toList();
     }
@@ -106,12 +117,15 @@ public class TodoApiController {
 
     // タスク新規作成処理API
     @PostMapping("/create")
-    public ResponseEntity<?> createTask(@Valid @RequestBody TodoRequest request, BindingResult result) {
+    public ResponseEntity<?> createTask(@Valid @RequestBody TodoRequest request, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
         if(result.hasErrors()) {
             return ResponseEntity.badRequest().body(Map.of("errorMessage", "入力に誤りがあります。"));
         }
 
         try {
+            // ログイン中のユーザー情報を取得してリクエストにセット
+            request.setUserId(loginUser.getUserId());
+
             taskService.createTask(request);
             return ResponseEntity.ok(Map.of("message", "タスクが正常に作成されました。"));
         } catch (Exception e) {

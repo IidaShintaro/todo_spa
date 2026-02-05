@@ -2,6 +2,7 @@ package com.sample.todo.service;
 
 import com.sample.todo.controller.dto.TodoRequest;
 import com.sample.todo.entity.TaskEntity;
+import com.sample.todo.entity.UserEntity;
 import com.sample.todo.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,13 @@ public class TaskService {
     private final TaskRepository repository;
 
     // 全件取得メソッド
-    public List<TaskEntity> findAll(){
-        return repository.findAll();
+    public List<TaskEntity> findAll(Long userId) {
+        return repository.findAll(userId);
     }
 
     // タスク検索メソッド
-    public List<TaskEntity> searchTask(Long categoryId, Long statusId) {
-        return repository.searchTask(categoryId, statusId);
+    public List<TaskEntity> searchTask(Long categoryId, Long statusId, Long userId) {
+        return repository.searchTask(categoryId, statusId, userId);
     }
 
     // 1件取得メソッド

@@ -28,4 +28,7 @@ public class TodoRequest {
     // 期限日
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deadline;
+
+    // ユーザーID
+    private Long userId;
 }

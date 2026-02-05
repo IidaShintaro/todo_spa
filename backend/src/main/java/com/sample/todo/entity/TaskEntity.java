@@ -51,4 +51,7 @@ public class TaskEntity {
     // 削除フラグ
     private  Boolean deleteFlag;
 
+    // ユーザーID
+    private Long userId;
+
 }

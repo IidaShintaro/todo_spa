@@ -3,6 +3,7 @@ package com.sample.todo.mapper;
 import com.sample.todo.controller.dto.TodoRequest;
 import com.sample.todo.controller.dto.TodoResponse;
 import com.sample.todo.entity.TaskEntity;
+import com.sample.todo.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,10 +13,10 @@ import java.util.List;
 public interface TaskMapper {
 
     // 全件取得
-    List<TaskEntity> findAll();
+    List<TaskEntity> findAll(Long userId);
 
     // タスク検索
-    List<TaskEntity> searchTask(Long categoryId, Long statusId);
+    List<TaskEntity> searchTask(Long categoryId, Long statusId, Long userId);
 
     // 1件取得
     TaskEntity findById(Long id);

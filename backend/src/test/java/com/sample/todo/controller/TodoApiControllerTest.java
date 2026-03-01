@@ -1,20 +1,23 @@
 package com.sample.todo.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.sample.todo.annotation.CsvDatabaseSetup;
 import com.sample.todo.annotation.SpringBootTestBaseForJUnit5;
+import com.sample.todo.controller.dto.TodoRequest;
 import com.sample.todo.controller.dto.TodoResponse;
 import com.sample.todo.dataset.CsvDbUnitExtension;
 import com.sample.todo.repository.CategoryRepository;
@@ -34,6 +37,8 @@ public class TodoApiControllerTest {
   @Autowired
   private TodoApiController target;
 
+  @Mock
+  @Spy
   /** タスクサービス. */
   @MockitoSpyBean
   private TaskService taskService;
@@ -79,18 +84,30 @@ public class TodoApiControllerTest {
     @DisplayName("~~~する")
     public void test_01_ok() {
 
+      // モック設定
+      Mockito.when(taskService.findAll()).thenReturn(new ArrayList<>());
+      Mockito.doReturn(new ArrayList<>(), Arrays.asList("", "")).when(taskService).findAll();
+      Mockito.doThrow(RuntimeException.class).when(taskService).findAll();
+      Mockito.doReturn(new TodoResponse()).when(taskService).findById(Mockito.any());
+      Mockito.doReturn(new TodoResponse()).when(taskService).findById(1L);
+      Mockito.doReturn(null).when(taskService).findById(2L);
+
       // 期待結果
       var tr1 = TodoResponse.builder().id(1L).category("").status("").build();
-      var tr2 = TodoResponse.builder().id(1L).category("").status("").build();
-      var tr3 = TodoResponse.builder().id(1L).category("").status("").build();
+      var tr2 = TodoResponse.builder().id(2L).category("").status("").build();
+      var tr3 = TodoResponse.builder().id(3L).category("").status("").build();
       List<TodoResponse> expected = List.of(tr1, tr2, tr3);
 
       // テスト実施
       List<TodoResponse> actual = TodoApiControllerTest.this.target.listTask();
 
       // 結果確認
-      assertThat(actual).isEqualTo(expected);
-      verify(taskRepository, times(1)).findAll();
+      Assertions.assertThat(actual).isEqualTo(expected);
+      Mockito.verify(taskRepository, Mockito.times(1)).findAll();
+      TodoRequest todoRequest = new TodoRequest();
+      todoRequest.setTask("");
+      Mockito.verify(taskRepository, Mockito.times(1)).updateTask(1L, todoRequest);
+      Mockito.verify(taskRepository, Mockito.times(1)).updateTask(Mockito.any(), Mockito.any());
 
     }
 

@@ -1,14 +1,19 @@
 package com.sample.todo.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -33,7 +38,9 @@ import com.sample.todo.service.TaskService;
 @DisplayName("ToDoアプリコントローラテスト.")
 public class TodoApiControllerTest {
 
-  /** ToDoアプリコントローラ. */
+  /**
+   * ToDoアプリコントローラ.
+   */
   @Autowired
   private TodoApiController target;
 
@@ -43,23 +50,33 @@ public class TodoApiControllerTest {
   @MockitoSpyBean
   private TaskService taskService;
 
-  /** カテゴリサービス. */
+  /**
+   * カテゴリサービス.
+   */
   @MockitoSpyBean
   private CategoryService categoryService;
 
-  /** ステータスサービス. */
+  /**
+   * ステータスサービス.
+   */
   @MockitoSpyBean
   private StatusService statusService;
 
-  /** タスクリポジトリ. */
+  /**
+   * タスクリポジトリ.
+   */
   @MockitoSpyBean
   private TaskRepository taskRepository;
 
-  /** カテゴリリポジトリ. */
+  /**
+   * カテゴリリポジトリ.
+   */
   @MockitoSpyBean
   private CategoryRepository categoryRepository;
 
-  /** ステータスリポジトリ. */
+  /**
+   * ステータスリポジトリ.
+   */
   @MockitoSpyBean
   private StatusRepository statusRepository;
 
@@ -79,10 +96,11 @@ public class TodoApiControllerTest {
      *     　　　　- ●●が返却される
      * </pre>
      */
-    @Test
+    @ParameterizedTest
+    @MethodSource("selectParam")
     @CsvDatabaseSetup("dbunit/init/todo/test_01_ok")
     @DisplayName("~~~する")
-    public void test_01_ok() {
+    public void test_01_ok(String a, int b) {
 
       // モック設定
       Mockito.when(taskService.findAll()).thenReturn(new ArrayList<>());
@@ -93,9 +111,9 @@ public class TodoApiControllerTest {
       Mockito.doReturn(null).when(taskService).findById(2L);
 
       // 期待結果
-      var tr1 = TodoResponse.builder().id(1L).category("").status("").build();
-      var tr2 = TodoResponse.builder().id(2L).category("").status("").build();
-      var tr3 = TodoResponse.builder().id(3L).category("").status("").build();
+      var tr1 = createFindAllTodoResponse(1L, "", "");
+      var tr2 = createFindAllTodoResponse(2L, "", "");
+      var tr3 = createFindAllTodoResponse(3L, "", "");
       List<TodoResponse> expected = List.of(tr1, tr2, tr3);
 
       // テスト実施
@@ -103,7 +121,7 @@ public class TodoApiControllerTest {
 
       // 結果確認
       Assertions.assertThat(actual).isEqualTo(expected);
-      Mockito.verify(taskRepository, Mockito.times(1)).findAll();
+      Mockito.verify(taskRepository, Mockito.times(b)).findAll();
       TodoRequest todoRequest = new TodoRequest();
       todoRequest.setTask("");
       Mockito.verify(taskRepository, Mockito.times(1)).updateTask(1L, todoRequest);
@@ -131,6 +149,15 @@ public class TodoApiControllerTest {
 
       // 結果確認
 
+    }
+
+    private TodoResponse createFindAllTodoResponse(long a, String b, String c) {
+      return TodoResponse.builder().id(a).category(b).status(c).deadline(LocalDate.now())
+          .detail("詳細").build();
+    }
+
+    static Stream<Arguments> selectParam() {
+      return Stream.of(Arguments.of("", 1), Arguments.of("", 2), Arguments.of("", 3));
     }
   }
 
